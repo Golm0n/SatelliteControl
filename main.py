@@ -31,9 +31,10 @@ def run_challenge():
         if engine.is_alive:
             lidar = engine.get_lidar_data()
             velocity = {"vx": engine.vel.x, "vy": -engine.vel.y}
+            current_fuel = engine.fuel # On ajoute l'info
             
-            # Appel du pilote
-            thrust = ai.decide_thrust(velocity, lidar)
+            # On modifie l'appel pour envoyer le fuel aussi
+            thrust = ai.decide_thrust(velocity, lidar, current_fuel) 
             engine.update(thrust)
 
         view.draw(engine)

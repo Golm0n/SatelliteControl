@@ -2,7 +2,7 @@ class PilotAI:
     def __init__(self):
         self.name = "Default Pilot"
 
-    def decide_thrust(self, velocity, lidar):
+    def decide_thrust(self, velocity, lidar, fuel):
         """
         velocity: {'vx': float, 'vy': float}
         lidar: [N, NE, E, SE, S, SO, O, NO] (distances 0-150)
@@ -15,10 +15,17 @@ class PilotAI:
         # exemple : 
 
         ax = 0.0
-        ay = 0.3 # On avance
+        ay = 0.4 # On pousse vers le haut
         
-        if lidar[0] < 80:
-            ax = 1.0 if lidar[7] > lidar[1] else -1.0
-            ay = -0.2
+        # Logique d'esquive basique
+        if lidar[0] < 100: # Si obstacle devant
+            # On tourne vers le côté où il y a le plus d'espace
+            ax = 0.8 if lidar[7] > lidar[1] else -0.8
+            ay = -0.2 # On freine pour mieux tourner
+            
+        # Exemple d'utilisation du fuel : 
+        # Si on est en galère de fuel, on arrête de pousser vers le haut
+        if fuel < 10:
+            ay = 0.0 
             
         return [ax, ay]

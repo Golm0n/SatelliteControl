@@ -24,6 +24,10 @@ class Visualizer:
         
         self.ast_img = pygame.image.load(os.path.join(img_dir, 'asteroid.png')).convert_alpha()
 
+        self.fuel_img = pygame.image.load(os.path.join(img_dir, 'fuel.jpg')).convert_alpha()
+        self.fuel_img = pygame.transform.scale(self.fuel_img, (30, 30))
+
+
     def draw(self, engine):
         self.screen.blit(self.bg_img, (0, 0))
         offset_y = -engine.pos.y + self.height * 0.75
@@ -36,6 +40,12 @@ class Visualizer:
                 rect = scaled_ast.get_rect(center=draw_pos) # On centre l'image redimensionné
                 self.screen.blit(scaled_ast, rect)
 
+        for item in engine.fuel_items:
+            draw_pos = (int(item["pos"].x), int(item["pos"].y + offset_y))
+            if -50 < draw_pos[1] < self.height + 50:
+                rect = self.fuel_img.get_rect(center=draw_pos)
+                self.screen.blit(self.fuel_img, rect)
+                
         if self.show_lidar_rays and engine.is_alive:
             lidar_data = engine.get_lidar_data()
             angles = [-90, -45, 0, 45, 90, 135, 180, 225]
@@ -50,6 +60,14 @@ class Visualizer:
         rotated_sat = pygame.transform.rotate(self.sat_img, tilt_angle)
         new_rect = rotated_sat.get_rect(center=sat_rect.center)
         
+
+        pygame.draw.rect(self.screen, (50, 50, 50), (self.width - 120, 20, 100, 20)) # Fond gris
+        fuel_color = (0, 255, 0) if engine.fuel > 30 else (255, 0, 0)
+        pygame.draw.rect(self.screen, fuel_color, (self.width - 120, 20, int(engine.fuel), 20)) # Jauge
+        fuel_txt = self.font.render(f"FUEL", True, (255, 255, 255))
+        self.screen.blit(fuel_txt, (self.width - 170, 20))
+
+
         if not engine.is_alive:
             pygame.draw.circle(self.screen, (255, 0, 0), sat_rect.center, 20, 2)
             
