@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environnement virtuel (si jamais tu en crées un plus tard)
+venv/
+.venv/
+
+# Dossiers d'IDE
+.vscode/
+.idea/
+
+# Facultatif : Ignore les images si tu veux que tes amis utilisent les leurs
+# img/
