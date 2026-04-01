@@ -32,6 +32,13 @@ class SatelliteEngine:
                 "value": 30.0 
             })
 
+    def get_fuel_radar(self):
+        if not self.fuel_items: return None
+        # Trouve le fuel le plus proche et renvoie la distance relative x et y
+        closest = min(self.fuel_items, key=lambda x: self.pos.distance_to(x["pos"]))
+        relative = closest["pos"] - self.pos
+        return {"dx": round(relative.x, 2), "dy": round(relative.y, 2)}
+    
     def get_lidar_data(self):
         distances = []
         # Angles pour N, NE, E, SE, S, SO, O, NO

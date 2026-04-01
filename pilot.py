@@ -2,7 +2,7 @@ class PilotAI:
     def __init__(self):
         self.name = "Default Pilot"
 
-    def decide_thrust(self, velocity, lidar, fuel):
+    def decide_thrust(self, velocity, lidar, fuel_radar, fuel):
         """
         velocity: {'vx': float, 'vy': float}
         lidar: [N, NE, E, SE, S, SO, O, NO] (distances 0-150)
