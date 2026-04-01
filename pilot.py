@@ -11,7 +11,7 @@ class PilotAI:
         # Logique a Compléter : 
         # On va controler la poussée du satélite, on peut faire une poussée sur x -x y et -y
         # l'objectif est de coder une logique d'évitement d'obstacle, 
-        # pour aller le plus haut possible, sans toucher aucun astéroides.
+        # pour aller le plus haut possible, sans toucher aucun astéroides. Le lidar détecte aussi les murs
         # exemple : 
 
         ax = 0.0

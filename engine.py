@@ -47,7 +47,14 @@ class SatelliteEngine:
             rad = math.radians(angle)
             dir_vec = pygame.Vector2(math.cos(rad), math.sin(rad))
             closest = self.lidar_range
-            
+
+            if dir_vec.x > 0: # Regarde vers la droite
+                dist_wall = (self.width - self.pos.x) / dir_vec.x
+                closest = min(closest, dist_wall)
+            elif dir_vec.x < 0: # Regarde vers la gauche
+                dist_wall = (0 - self.pos.x) / dir_vec.x
+                closest = min(closest, dist_wall)
+                
             for ast in self.asteroids:
                 to_ast = ast["pos"] - self.pos
                 if to_ast.dot(dir_vec) > 0:
