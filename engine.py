@@ -20,20 +20,18 @@ class SatelliteEngine:
         self._spawn_elements(0, -2000)
 
     def _spawn_elements(self, bottom_y, top_y):
-        # Génération des astéroïdes
+        # Génération des astéroides et des items de fuel
         for _ in range(15):
             self.asteroids.append({
                 "pos": pygame.Vector2(random.uniform(50, self.width-50), random.uniform(top_y, bottom_y)),
                 "radius": random.uniform(15, 45)
             })
-        # Génération des items de fuel
         for _ in range(2):
             self.fuel_items.append({
                 "pos": pygame.Vector2(random.uniform(50, self.width-50), random.uniform(top_y, bottom_y)),
                 "value": 30.0 
             })
 
-    # --- LA MÉTHODE QUI MANQUAIT ---
     def get_lidar_data(self):
         distances = []
         # Angles pour N, NE, E, SE, S, SO, O, NO
@@ -45,9 +43,7 @@ class SatelliteEngine:
             
             for ast in self.asteroids:
                 to_ast = ast["pos"] - self.pos
-                # On vérifie si l'astéroïde est dans la direction du rayon (dot product > 0)
                 if to_ast.dot(dir_vec) > 0:
-                    # Distance entre le satellite et le bord de l'astéroïde
                     d = max(0, to_ast.length() - ast["radius"])
                     if d < closest:
                         closest = d
@@ -57,7 +53,6 @@ class SatelliteEngine:
     def update(self, thrust):
         if not self.is_alive: return
 
-        # Consommation de fuel
         thrust_intensity = math.sqrt(thrust[0]**2 + thrust[1]**2)
         fuel_cost = thrust_intensity * 0.15 
         
@@ -71,26 +66,21 @@ class SatelliteEngine:
         self.vel *= self.friction
         self.pos += self.vel
         
-        # Calcul de la distance parcourue
         dist_curr = int((self.height - 100) - self.pos.y)
         self.distance = max(self.distance, dist_curr)
 
-        # Collision Astéroïdes
         for ast in self.asteroids:
             if self.pos.distance_to(ast["pos"]) < ast["radius"] + self.sat_radius:
                 self.is_alive = False
 
-        # Récupération Fuel
         for item in self.fuel_items[:]: 
-            if self.pos.distance_to(item["pos"]) < 25: # Rayon de ramassage
+            if self.pos.distance_to(item["pos"]) < 25:
                 self.fuel = min(100.0, self.fuel + item["value"])
                 self.fuel_items.remove(item)
         
-        # Sortie de piste ou retour en arrière trop prononcé
         if self.pos.x < 0 or self.pos.x > self.width or self.pos.y > self.height + 200:
             self.is_alive = False
 
-        # Génération infinie
         highest_y = min(a["pos"].y for a in self.asteroids)
         if self.pos.y < highest_y + 800:
             self._spawn_elements(highest_y, highest_y - 1200)

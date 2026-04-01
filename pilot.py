@@ -23,7 +23,7 @@ class PilotAI:
             ax = 0.8 if lidar[7] > lidar[1] else -0.8
             ay = -0.2 # On freine pour mieux tourner
             
-        # Exemple d'utilisation du fuel : 
+        # Exemple d'utilisation du fuel (100 = fuel max): 
         # Si on est en galère de fuel, on arrête de pousser vers le haut
         if fuel < 10:
             ay = 0.0 
