@@ -40,29 +40,37 @@ class SatelliteEngine:
         return {"dx": round(relative.x, 2), "dy": round(relative.y, 2)}
     
     def get_lidar_data(self):
-        distances = []
-        # Angles pour N, NE, E, SE, S, SO, O, NO
-        angles = [-90, -45, 0, 45, 90, 135, 180, 225]
-        for angle in angles:
-            rad = math.radians(angle)
-            dir_vec = pygame.Vector2(math.cos(rad), math.sin(rad))
-            closest = self.lidar_range
+    distances = []
+    # Angles pour N, NE, E, SE, S, SO, O, NO
+    angles = [-90, -45, 0, 45, 90, 135, 180, 225]
+    for angle in angles:
+        rad = math.radians(angle)
+        dir_vec = pygame.Vector2(math.cos(rad), math.sin(rad))
+        closest = self.lidar_range
 
-            if dir_vec.x > 0: # Regarde vers la droite
-                dist_wall = (self.width - self.pos.x) / dir_vec.x
-                closest = min(closest, dist_wall)
-            elif dir_vec.x < 0: # Regarde vers la gauche
-                dist_wall = (0 - self.pos.x) / dir_vec.x
-                closest = min(closest, dist_wall)
+        # Gestion des murs
+        if dir_vec.x > 0: 
+            dist_wall = (self.width - self.pos.x) / dir_vec.x
+            closest = min(closest, dist_wall)
+        elif dir_vec.x < 0: 
+            dist_wall = (0 - self.pos.x) / dir_vec.x
+            closest = min(closest, dist_wall)
+            
+        # Gestion des astéroïdes
+        for ast in self.asteroids:
+            to_ast = ast["pos"] - self.pos
+            projection = to_ast.dot(dir_vec)
+            
+            if projection > 0:
+                dist_to_line = math.sqrt(max(0, to_ast.length_squared() - projection**2))
                 
-            for ast in self.asteroids:
-                to_ast = ast["pos"] - self.pos
-                if to_ast.dot(dir_vec) > 0:
-                    d = max(0, to_ast.length() - ast["radius"])
-                    if d < closest:
-                        closest = d
-            distances.append(round(closest, 2))
-        return distances
+                if dist_to_line < ast["radius"]:
+                    collision_dist = projection - math.sqrt(ast["radius"]**2 - dist_to_line**2)
+                    if 0 < collision_dist < closest:
+                        closest = collision_dist
+                        
+        distances.append(round(closest, 2))
+    return distances
 
     def update(self, thrust):
         if not self.is_alive: return

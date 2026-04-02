@@ -1,3 +1,5 @@
+import time
+
 class PilotAI:
     def __init__(self):
         self.name = "Default Pilot"
@@ -15,14 +17,18 @@ class PilotAI:
         # exemple : 
 
         ax = 0.0
-        ay = 0.4 # On pousse vers le haut
+        ay = 0.2
+        if lidar[0] > 100:
+            ay = 0.4 # On pousse vers le haut
         
         # Logique d'esquive basique
         if lidar[0] < 100: # Si obstacle devant
+            ay = -0.3
             # On tourne vers le côté où il y a le plus d'espace
-            ax = 0.8 if lidar[7] > lidar[1] else -0.8
-            ay = -0.2 # On freine pour mieux tourner
-            
+            ax = 0.8 if lidar[7] < lidar[1] else -0.8
+
+        ax = 0.8 if lidar[6] < 70 else 0
+        ax = -0.8 if lidar[2] < 70 else 0
         # Exemple d'utilisation du fuel (100 = fuel max): 
         # Si on est en galère de fuel, on arrête de pousser vers le haut
         if fuel < 10:
