@@ -1,5 +1,3 @@
-import time
-
 class PilotAI:
     def __init__(self):
         self.name = "Default Pilot"
